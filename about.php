@@ -11,6 +11,7 @@ if (isset($_SESSION['UserID'])) {
 	$userId = $_SESSION['UserID'];
 }
 ?>
+
 <!doctype html>
 
 <html lang="en">
@@ -18,7 +19,7 @@ if (isset($_SESSION['UserID'])) {
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-		<title>Sign Up</title>
+		<title>Events</title>
 		<meta name="description" content="Book tickets online for events">
 		<meta name="author" content="Max & Xavier">
 
@@ -84,40 +85,33 @@ if (isset($_SESSION['UserID'])) {
 				</ul>
 			</div>
 		</nav>
-		
 
-		<main>
+		<main class="h-100">
 			<!--Hero Image-->
 			<div class="HeroImg d-flex align-items-center justify-content-center min-vh-100">
-				<div class="LoginMiddleOfPage">
-					<form method="post" action="signup.php">
-						<div class="mb-3">
-							<input type="username" placeholder="Username" class="form-control" name="SignupUsername" id="SignupUsername" required>
-						</div>
-						<div class="mb-3">
-							<input type="password" placeholder="Password" class="form-control" name="SignupPassword" id="SignupPassword" required>
-						</div>
-						<div class="d-flex flex-row">
-							<div class="me-auto">
-								<a class="nav-link" href="login_page.php" style="padding: 8px;">Log in</a>
-							</div>
-							<div>
-								<button type="submit" class="btn btn-primary">Create new account</button>
-							</div>	
-						</div>
-					</form>
+				<div class="AboutMiddleOfPage p-2 font-weight-bold">
+					<p>
+						We are commited to getting you to the events you love more easly and more often.
+					</p>
+					<p>
+						We truly belive in the power of shared experiences to connect people.
+					</p>
+					<p>
+						We are relentless about finding ways to make your event discovery and ticket purchase easy, fun, and exciting.
+					</p>
 				</div>
 			</div>
-
+			
 
 			<footer class="bg-dark text-center p-4 text-secondary">
 				Copyright &copy 2021 Max & Xavier | All Rights Reserved
 			</footer>
 		</main>
+		
 
-	<!-- JavaScript -->
-	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+		<!-- JavaScript -->
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 	</body>
 </html>

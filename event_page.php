@@ -5,6 +5,14 @@ session_start();
 include "connect.php";
 include "functions.php";
 
+$loggedIn = false;
+if (isset($_SESSION['LoggedIn'])) {
+	$loggedIn = $_SESSION['LoggedIn'];
+}
+$userId = "";
+if (isset($_SESSION['UserID'])) {
+	$userId = $_SESSION['UserID'];
+}
 ?>
 
 <!doctype html>
@@ -45,7 +53,7 @@ include "functions.php";
 						<a class="nav-link" href="index.php"> Events </a>
 					</li>
 					<?php
-						if ($_SESSION['LoggedIn']) {
+						if ($loggedIn) {
 					?>
 					<li class="nav-item">
 						<a class="nav-link" href="bookings_page.php"> My Bookings </a>
@@ -60,7 +68,7 @@ include "functions.php";
 						<a class="nav-link" href="about.php"> About Us </a>
 					</li>
 					<?php
-						if (!$_SESSION['LoggedIn']) {
+						if (!$loggedIn) {
 					?>
 					<li class="nav-item">
 						<a class="nav-link" href="login_page.php"> Log In/Sign Up </a>
@@ -69,7 +77,7 @@ include "functions.php";
 						}
 					?>
 					<?php
-						if ($_SESSION['LoggedIn']) {
+						if ($loggedIn) {
 					?>
 					<li class="nav-item">
 						<a class="nav-link" href="logout.php"> Logout </a>
@@ -142,6 +150,10 @@ include "functions.php";
 				</div>
 			</div>
 
+
+			<footer class="bg-dark text-center p-4 text-secondary">
+				Copyright &copy 2021 Max & Xavier | All Rights Reserved
+			</footer>
 		</main>
 
 		<!-- JavaScript -->
@@ -173,7 +185,7 @@ include "functions.php";
 				;
 				const billing_data_php =
 				<?php
-					$result = getBillingData($_SESSION['UserID'], $con);
+					$result = getBillingData($userId, $con);
 					echo "'";
 					echo json_encode($result);
 					echo "'";
@@ -236,23 +248,36 @@ include "functions.php";
 						time_option.appendChild(document.createTextNode("Tickets sold out!"));
 						time_selector.appendChild(time_option);
 					} else {
+						const time_default_option = document.createElement("option");
+						time_default_option.setAttribute("value", "");
+						time_default_option.appendChild(document.createTextNode("Select time"));
+						time_selector.appendChild(time_default_option);
 						//write time options
 						for (const elem of timeArray) {
 							const time_option = document.createElement("option");
-							time_option.setAttribute("value", elem.StartingTime + " " + elem.EndingTime);
-							time_option.appendChild(document.createTextNode(
-								"Start: " + elem.StartingTime + " | End: " + elem.EndingTime
-							));
-							time_selector.appendChild(time_option);
+							
+							time_option.setAttribute("value", "");
+							var dsbl = true;
+							time_option.setAttribute("title", "Tickets sold out!");
+							time_option.appendChild(document.createTextNode("Tickets sold out!"));
 
 							for (const elem2 of available_timeArray) {
 								if (elem.EventID === elem2.EventID) {
-									time_option.setAttribute("value", "");
-									time_option.setAttribute("disabled", "true");
-									time_option.setAttribute("title", "Tickets sold out!");
+									time_option.innerHTML = "";
+									const jsonstr = "'{\"StartTime\" : \"" + elem.StartingTime + "\", \"EndTime\" : \"" + elem.EndingTime + "\"}'";
+									time_option.setAttribute("value", jsonstr);
+									dsbl = false;
+									time_option.setAttribute("title", "");
+									time_option.appendChild(document.createTextNode(
+										"Start: " + elem.StartingTime + " | End: " + elem.EndingTime
+									));
 									break;
 								}
-							}
+							}	
+							if (dsbl) {
+								time_option.setAttribute("disabled", "true");
+							}						
+							time_selector.appendChild(time_option);
 						}
 					}
 				}

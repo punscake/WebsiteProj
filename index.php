@@ -5,6 +5,14 @@ session_start();
 include "connect.php";
 include "functions.php";
 
+$loggedIn = false;
+if (isset($_SESSION['LoggedIn'])) {
+	$loggedIn = $_SESSION['LoggedIn'];
+}
+$userId = "";
+if (isset($_SESSION['UserID'])) {
+	$userId = $_SESSION['UserID'];
+}
 ?>
 
 <!doctype html>
@@ -45,7 +53,7 @@ include "functions.php";
 						<a class="nav-link" href="index.php"> Events </a>
 					</li>
 					<?php
-						if ($_SESSION['LoggedIn']) {
+						if ($loggedIn) {
 					?>
 					<li class="nav-item">
 						<a class="nav-link" href="bookings_page.php"> My Bookings </a>
@@ -60,7 +68,7 @@ include "functions.php";
 						<a class="nav-link" href="about.php"> About Us </a>
 					</li>
 					<?php
-						if (!$_SESSION['LoggedIn']) {
+						if (!$loggedIn) {
 					?>
 					<li class="nav-item">
 						<a class="nav-link" href="login_page.php"> Log In/Sign Up </a>
@@ -69,7 +77,7 @@ include "functions.php";
 						}
 					?>
 					<?php
-						if ($_SESSION['LoggedIn']) {
+						if ($loggedIn) {
 					?>
 					<li class="nav-item">
 						<a class="nav-link" href="logout.php"> Logout </a>
@@ -91,12 +99,14 @@ include "functions.php";
 
 
 			<!--Event Selection-->
-			<div class="d-flex flex-row justify-content-evenly min-vh-100" id="event_container">
-				
+			<div class="d-flex flex-row justify-content-evenly" id="event_container">
+				<!-- JavaScript added content -->
 			</div>
 			
 
-			
+			<footer class="bg-dark text-center p-4 text-secondary">
+				Copyright &copy 2021 Max & Xavier | All Rights Reserved
+			</footer>
 		</main>
 		
 
@@ -125,15 +135,7 @@ include "functions.php";
 			function listTable(){
 				//calc num of colums
 				window_width = window.innerWidth;
-				num_displayed_colums = 0;
-
-				if (window_width <= 860 && query_array.length > 0) {
-					num_displayed_colums = 1;
-				} else if (window_width <= 1300) {
-					num_displayed_colums = 2;
-				} else {
-					num_displayed_colums = 3;
-				}
+				num_displayed_colums = Math.max(parseInt(window_width / 333), 1);
 				
 				//remove then add colums
 					const main_container = document.getElementById("event_container");
@@ -142,9 +144,9 @@ include "functions.php";
 					main_container.innerHTML = "";
 
 					//add disclaimer if no events
-					if (num_displayed_colums === 0) {
+					if (query_array.length === 0) {
 						const col = document.createElement("div");
-						col.setAttribute("style", "background-color: #112a54; margin: 1em; font-size: 300%; text-align: center; color: white; border-radius: 10px;");
+						col.setAttribute("style", "background-color: #112a54; font-size: 300%; text-align: center; color: white; border-radius: 10px;");
 						const text = document.createTextNode("No events scheduled yet! Come back later.");
 						col.appendChild(text);
 						main_container.appendChild(col);
@@ -154,7 +156,7 @@ include "functions.php";
 					for (let i = 0; i < num_displayed_colums; i++) {
 						//create column
 						const col = document.createElement("div");
-						col.setAttribute("class", "flex-col ms-3 me-3");
+						col.setAttribute("class", "flex-col");
 
 						//create column elements and append each
 						for (let j = i; j < query_array.length; j += num_displayed_colums) {

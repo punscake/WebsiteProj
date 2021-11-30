@@ -10,16 +10,16 @@ function writeQueryResultToArray($queryResult) { //returns array
     return $result;
 }
 
-function getAllSimilarEvents($ExampleEventID, $database) { //returns array
-    $query = "SELECT * FROM EVENTS WHERE Name = (SELECT Name FROM EVENTS WHERE EventID = " . $ExampleEventID . " LIMIT 1)
-    && Description = (SELECT Description FROM EVENTS WHERE EventID = " . $ExampleEventID . " LIMIT 1);";
+function getAllSimilarEvents($EventID, $database) { //returns array
+    $query = "SELECT * FROM EVENTS WHERE Name = (SELECT Name FROM EVENTS WHERE EventID = " . $EventID . " LIMIT 1)
+    && Description = (SELECT Description FROM EVENTS WHERE EventID = " . $EventID . " LIMIT 1);";
     $query_result = mysqli_query($database, $query);
     return writeQueryResultToArray($query_result);
 }
 
-function getAllSimilarEventsOnlySeatsAvailable($ExampleEventID, $database) { //returns array
-    $query = "SELECT * FROM EVENTS WHERE Name = (SELECT Name FROM EVENTS WHERE EventID = " . $ExampleEventID . " LIMIT 1)
-    && Description = (SELECT Description FROM EVENTS WHERE EventID = " . $ExampleEventID . " LIMIT 1);";
+function getAllSimilarEventsOnlySeatsAvailable($EventID, $database) { //returns array
+    $query = "SELECT * FROM EVENTS WHERE Name = (SELECT Name FROM EVENTS WHERE EventID = " . $EventID . " LIMIT 1)
+    && Description = (SELECT Description FROM EVENTS WHERE EventID = " . $EventID . " LIMIT 1);";
     $query_result = mysqli_query($database, $query);
     $filtered_array = array();
     if ($query_result) {
@@ -48,7 +48,7 @@ function checkTicketAvailable($TicketID, $database) { //returns bool
 }
 
 function getAvailableTickets($EventID, $database) { //returns tickets table, or false
-    $query = "SELECT * FROM TICKETS WHERE Event = " . $EventID . " && BelongsToPerson = NULL;";
+    $query = "SELECT * FROM TICKETS WHERE Event = " . $EventID . " && BelongsToPerson IS NULL;";
     $result = mysqli_query($database, $query);
     return $result;
 }

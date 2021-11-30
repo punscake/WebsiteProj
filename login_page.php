@@ -2,6 +2,14 @@
 
 session_start(); 
 
+$loggedIn = false;
+if (isset($_SESSION['LoggedIn'])) {
+	$loggedIn = $_SESSION['LoggedIn'];
+}
+$userId = "";
+if (isset($_SESSION['UserID'])) {
+	$userId = $_SESSION['UserID'];
+}
 ?>
 
 <!doctype html>
@@ -42,7 +50,7 @@ session_start();
 						<a class="nav-link" href="index.php"> Events </a>
 					</li>
 					<?php
-						if ($_SESSION['LoggedIn']) {
+						if ($loggedIn) {
 					?>
 					<li class="nav-item">
 						<a class="nav-link" href="bookings_page.php"> My Bookings </a>
@@ -57,7 +65,7 @@ session_start();
 						<a class="nav-link" href="about.php"> About Us </a>
 					</li>
 					<?php
-						if (!$_SESSION['LoggedIn']) {
+						if (!$loggedIn) {
 					?>
 					<li class="nav-item">
 						<a class="nav-link" href="login_page.php"> Log In/Sign Up </a>
@@ -66,7 +74,7 @@ session_start();
 						}
 					?>
 					<?php
-						if ($_SESSION['LoggedIn']) {
+						if ($loggedIn) {
 					?>
 					<li class="nav-item">
 						<a class="nav-link" href="logout.php"> Logout </a>
@@ -102,6 +110,11 @@ session_start();
 					</div>
 				</div>
 			</div>
+			
+
+			<footer class="bg-dark text-center p-4 text-secondary">
+				Copyright &copy 2021 Max & Xavier | All Rights Reserved
+			</footer>
 		</main>
 
 	<!-- JavaScript -->
