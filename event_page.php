@@ -6,13 +6,15 @@ include "connect.php";
 include "functions.php";
 
 $loggedIn = false;
-if (isset($_SESSION['LoggedIn'])) {
-	$loggedIn = $_SESSION['LoggedIn'];
-}
 $userId = "";
-if (isset($_SESSION['UserID'])) {
+$username = "";
+if (!empty($_SESSION['UserID'])) {
+	$loggedIn = true;
 	$userId = $_SESSION['UserID'];
+	$username = $_SESSION['Username'];
 }
+
+$all_similar_events = getAllSimilarEvents($_GET['event'], $con);
 ?>
 
 <!doctype html>
@@ -42,6 +44,14 @@ if (isset($_SESSION['UserID'])) {
 		<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark pt-1 pb-1 pe-1">
 
 			<a class="navbar-brand" href="index.php"><img class="Logo" src="content/logo.ico" alt="logo"></a>
+
+			<?php
+				if ($loggedIn) {
+			?>
+			<div class="navbar-brand heebo-font">
+				<?php echo "Hello, " . $username ."!"; ?>
+			</div>
+			<?php } ?>
 
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
@@ -94,59 +104,70 @@ if (isset($_SESSION['UserID'])) {
 			<!--Hero Image-->
 			<div class="HeroImg d-flex align-items-center justify-content-center min-vh-100">
 				<div class="EventMiddleOfPage p-3">
-					<div class="p-1" style="font-weight: bold;" id="event_name_container">
-						<!-- JS added text -->
-					</div>
-					<div class="p-1" style="border-style: inset none outset none;" id="event_desc_container">
-						<!-- JS added text -->
-					</div>
-					<div class="p-1" style="border-style: none none outset none;" id="event_venue_container">
-						<!-- JS added text -->
-					</div>
-					<form method="POST" action="#" class="mt-2" id="ticket_form">
-						<div class="d-flex flex-row">
-							<div class="me-auto Bebas-font pt-1">
-								Available Dates:
-							</div>
-							<div class="">
-								<select class="form-select" aria-label="Select Date" id="date_selector" onchange="writeTimeOptions()">
-									<option value="" selected>Select Date</option>
-									<!-- JS added options -->
-								</select>
-							</div>
+					<?php
+					if (mysqli_num_rows($all_similar_events) > 0) {?>
+
+						<div class="p-1" style="font-weight: bold;" id="event_name_container">
+							<!-- JS added text -->
 						</div>
-						<div class="d-flex flex-row mb-1">
-							<div class="me-auto Bebas-font pt-1">
-								Time:
-							</div>
-							<div class="">
-								<select class="form-select" aria-label="Select Date" id="time_selector">
-									<option value="" selected>Date Not Selected</option>
-									<!-- JS added options -->
-								</select>
-							</div>
+						<div class="p-1" style="border-style: inset none outset none;" id="event_desc_container">
+							<!-- JS added text -->
 						</div>
-						<div class="p-1 mt2 heebo-font" style="border-top: inset;">
+						<div class="p-1" style="border-style: none none outset none;" id="event_venue_container">
+							<!-- JS added text -->
+						</div>
+
+						<form method="POST" action="attempt_purchase.php" class="mt-2" id="ticket_form">
 							<div class="d-flex flex-row">
-								<div class="ms-auto me-4 pt-2 form-check form-switch">
-									<input class="form-check-input" type="checkbox" id="SaveBillingProfile">
-									<label class="form-check-label" for="flexCheckDefault"> Save Profile</label>
+								<div class="me-auto Bebas-font pt-1">
+									Available Dates:
 								</div>
 								<div class="">
-									<select class="form-select" aria-label="Select Billing Profile" id="billing_profile_selector">
-										<option value="" onchange="LoadBillingData()" selected>Select Billing Profile</option>
+									<select class="form-select" aria-label="Select Date" id="date_selector" onchange="writeTimeOptions()" required>
+										<option value="" selected>Select Date</option>
 										<!-- JS added options -->
 									</select>
 								</div>
 							</div>
-							<div class="mt-1 heebo-font" id="billing_container">
-								<!-- JS added form -->
+							<div class="d-flex flex-row mb-1">
+								<div class="me-auto Bebas-font pt-1">
+									Time:
+								</div>
+								<div class="">
+									<select class="form-select" aria-label="Select Date" name="time_selector" id="time_selector" required>
+										<option value="" selected>Date Not Selected</option>
+										<!-- JS added options -->
+									</select>
+								</div>
 							</div>
-						</div>
-						<div class="d-flex justify-content-center mt-3">
-							<div class="btn btn-primary" onclick="AttemptPurchase()">Buy a Ticket</div>
-						</div>
-					</form>
+							<?php if ($loggedIn) { ?>
+							<div class="p-1 mt2 heebo-font" style="border-top: inset;">
+								<div class="d-flex flex-row">
+									<div class="ms-auto me-4 pt-2 form-check form-switch">
+										<input class="form-check-input" type="checkbox" id="SaveBillingProfile" name="SaveBillingProfile">
+										<label class="form-check-label" for="flexCheckDefault">Save Profile</label>
+									</div>
+									<div class="">
+										<select class="form-select" aria-label="Select Billing Profile" id="billing_profile_selector" name="billing_profile_selector" onchange="LoadBillingData()">
+											<option value="" selected>No Billing Profile</option>
+											<!-- JS added options -->
+										</select>
+									</div>
+								</div>
+								<div class="mt-1 heebo-font" id="billing_container">
+									<!-- JS added form -->
+								</div>
+							</div>
+							<div class="d-flex justify-content-center mt-3">
+								<button class="btn btn-primary" type="submit">Buy a Ticket</button>
+							</div>
+						</form>
+						<?php } else { ?>
+							<p class="p-2 font-weight-bold text-center Bebas-font">Log In to Purchase</p>
+						<?php } ?>
+					<?php } else { ?>
+						<p>Event not found!</p>
+					<?php } ?>
 				</div>
 			</div>
 
@@ -163,15 +184,12 @@ if (isset($_SESSION['UserID'])) {
 		
 		<script>
 			<?php
-			if (!isset($_GET['event'])) {
-				echo "Event not found";
-			} else { ?>	
+			if (mysqli_num_rows($all_similar_events) > 0) { ?>	
 				//get tables
 				const all_events_php =
-				<?php
-					$result = getAllSimilarEvents($_GET['event'], $con);
+				<?php					
 					echo "'";
-					echo json_encode($result);
+					echo json_encode(writeQueryResultToArray($all_similar_events));
 					echo "'";
 				?>
 				;
@@ -194,7 +212,7 @@ if (isset($_SESSION['UserID'])) {
 				//as a javascript objects
 				const all_events_array = JSON.parse(all_events_php);
 				const available_events_array = JSON.parse(available_events_php);
-				const billing_data_array = JSON.parse(billing_data_php);
+				const billing_profile_array = JSON.parse(billing_data_php);
 
 				//write event name and description
 				const name_container = document.getElementById("event_name_container");
@@ -247,9 +265,10 @@ if (isset($_SESSION['UserID'])) {
 						time_option.setAttribute("disabled", "true");
 						time_option.appendChild(document.createTextNode("Tickets sold out!"));
 						time_selector.appendChild(time_option);
-					} else {
+					} else { //lists options
 						const time_default_option = document.createElement("option");
 						time_default_option.setAttribute("value", "");
+						time_default_option.setAttribute("selected", "true");
 						time_default_option.appendChild(document.createTextNode("Select time"));
 						time_selector.appendChild(time_default_option);
 						//write time options
@@ -264,8 +283,7 @@ if (isset($_SESSION['UserID'])) {
 							for (const elem2 of available_timeArray) {
 								if (elem.EventID === elem2.EventID) {
 									time_option.innerHTML = "";
-									const jsonstr = "'{\"StartTime\" : \"" + elem.StartingTime + "\", \"EndTime\" : \"" + elem.EndingTime + "\"}'";
-									time_option.setAttribute("value", jsonstr);
+									time_option.setAttribute("value", elem.EventID);
 									dsbl = false;
 									time_option.setAttribute("title", "");
 									time_option.appendChild(document.createTextNode(
@@ -282,7 +300,17 @@ if (isset($_SESSION['UserID'])) {
 					}
 				}
 
-				//TODO: list billing profiles
+				<?php if ($loggedIn) { ?>
+				//list billing profiles
+				for (let i = 0; i < billing_profile_array.length; i++) {
+					const billing_profile = document.createElement("option");
+					billing_profile.setAttribute("value", billing_profile_array[i].BillingInfoID);
+
+					billing_profile.setAttribute("value", billing_profile_array[i].BillingInfoID);
+					const str = "Profile #" + billing_profile_array[i].BillingInfoID;
+					billing_profile.appendChild(document.createTextNode(str));
+					billing_profile_selector.appendChild(billing_profile);
+				}
 
 				//render billing form
 				listBillingForm();
@@ -298,9 +326,11 @@ if (isset($_SESSION['UserID'])) {
 					const first_name = document.createElement("input");
 					first_name.setAttribute("type", "text");
 					first_name.setAttribute("id", "firstName");
+					first_name.setAttribute("name", "firstName");
 					first_name.setAttribute("class", "form-control");
 					first_name.setAttribute("placeholder", "First Name*");
 					first_name.setAttribute("required", "true");
+					first_name.setAttribute("pattern", "^[A-Za-z]{0,20}$");
 					const first_name_container = document.createElement("div");
 					first_name_container.setAttribute("class", "flex-fill");
 					first_name_container.appendChild(first_name);
@@ -308,9 +338,11 @@ if (isset($_SESSION['UserID'])) {
 					const last_name = document.createElement("input");
 					last_name.setAttribute("type", "text");
 					last_name.setAttribute("id", "lastName");
+					last_name.setAttribute("name", "lastName");
 					last_name.setAttribute("class", "form-control");
 					last_name.setAttribute("placeholder", "Last Name*");
 					last_name.setAttribute("required", "true");
+					last_name.setAttribute("pattern", "^[A-Za-z]{0,20}$");
 					const last_name_container = document.createElement("div");
 					last_name_container.setAttribute("class", "flex-fill");
 					last_name_container.appendChild(last_name);
@@ -318,9 +350,11 @@ if (isset($_SESSION['UserID'])) {
 					const email = document.createElement("input");
 					email.setAttribute("type", "text");
 					email.setAttribute("id", "email");
+					email.setAttribute("name", "email");
 					email.setAttribute("class", "form-control");
 					email.setAttribute("placeholder", "Email*");
 					email.setAttribute("required", "true");
+					email.setAttribute("type", "email");
 					const email_container = document.createElement("div");
 					email_container.setAttribute("class", "flex-fill");
 					email_container.appendChild(email);
@@ -328,9 +362,11 @@ if (isset($_SESSION['UserID'])) {
 					const address = document.createElement("input");
 					address.setAttribute("type", "text");
 					address.setAttribute("id", "address");
+					address.setAttribute("name", "address");
 					address.setAttribute("class", "form-control");
 					address.setAttribute("placeholder", "Address*");
 					address.setAttribute("required", "true");
+					address.setAttribute("pattern", "^[A-Za-z0-9 ]{0,44}$");
 					const address_container = document.createElement("div");
 					address_container.setAttribute("class", "flex-fill");
 					address_container.appendChild(address);
@@ -338,9 +374,11 @@ if (isset($_SESSION['UserID'])) {
 					const postal = document.createElement("input");
 					postal.setAttribute("type", "text");
 					postal.setAttribute("id", "postal");
+					postal.setAttribute("name", "postal");
 					postal.setAttribute("class", "form-control");
 					postal.setAttribute("placeholder", "Postal Code*");
 					postal.setAttribute("required", "true");
+					postal.setAttribute("pattern", "^.{2,10}$");
 					const postal_container = document.createElement("div");
 					postal_container.setAttribute("class", "flex-fill");
 					postal_container.appendChild(postal);
@@ -348,29 +386,35 @@ if (isset($_SESSION['UserID'])) {
 					const city = document.createElement("input");
 					city.setAttribute("type", "text");
 					city.setAttribute("id", "city");
+					city.setAttribute("name", "city");
 					city.setAttribute("class", "form-control");
 					city.setAttribute("placeholder", "City*");
 					city.setAttribute("required", "true");
+					city.setAttribute("pattern", "^[A-Za-z ]{1,20}$");
 					const city_container = document.createElement("div");
 					city_container.setAttribute("class", "flex-fill");
 					city_container.appendChild(city);
 
-					const ProvinceState = document.createElement("input");
-					ProvinceState.setAttribute("type", "text");
-					ProvinceState.setAttribute("id", "ProvinceState");
-					ProvinceState.setAttribute("class", "form-control");
-					ProvinceState.setAttribute("placeholder", "Province/State");
-					const ProvinceState_container = document.createElement("div");
-					ProvinceState_container.setAttribute("class", "flex-fill");
-					ProvinceState_container.appendChild(ProvinceState);
+					const StateProvince = document.createElement("input");
+					StateProvince.setAttribute("type", "text");
+					StateProvince.setAttribute("id", "StateProvince");
+					StateProvince.setAttribute("name", "StateProvince");
+					StateProvince.setAttribute("class", "form-control");
+					StateProvince.setAttribute("placeholder", "Province/State");
+					StateProvince.setAttribute("pattern", "^[A-Za-z ]{1,20}$");
+					const StateProvince_container = document.createElement("div");
+					StateProvince_container.setAttribute("class", "flex-fill");
+					StateProvince_container.appendChild(StateProvince);
 
 
 					const country = document.createElement("input");
 					country.setAttribute("type", "text");
 					country.setAttribute("id", "country");
+					country.setAttribute("name", "country");
 					country.setAttribute("class", "form-control");
 					country.setAttribute("placeholder", "Country*");
 					country.setAttribute("required", "true");
+					country.setAttribute("pattern", "^[A-Za-z ]{1,20}$");
 					const country_container = document.createElement("div");
 					country_container.setAttribute("class", "flex-fill");
 					country_container.appendChild(country);
@@ -392,7 +436,7 @@ if (isset($_SESSION['UserID'])) {
 						const CPSC_container = document.createElement("div");
 						CPSC_container.setAttribute("class", "d-flex flex-row");
 						CPSC_container.appendChild(city_container);
-						CPSC_container.appendChild(ProvinceState_container);
+						CPSC_container.appendChild(StateProvince_container);
 						CPSC_container.appendChild(country_container);
 
 						main_container.appendChild(names_container);
@@ -406,7 +450,7 @@ if (isset($_SESSION['UserID'])) {
 						address_container.setAttribute("class", "mb-1");
 						postal_container.setAttribute("class", "mb-1");
 						city_container.setAttribute("class", "mb-1");
-						ProvinceState_container.setAttribute("class", "mb-1");
+						StateProvince_container.setAttribute("class", "mb-1");
 						country_container.setAttribute("class", "");
 
 						main_container.appendChild(first_name_container);
@@ -415,22 +459,35 @@ if (isset($_SESSION['UserID'])) {
 						main_container.appendChild(address_container);
 						main_container.appendChild(postal_container);
 						main_container.appendChild(city_container);
-						main_container.appendChild(ProvinceState_container);
+						main_container.appendChild(StateProvince_container);
 						main_container.appendChild(country_container);
 					}
 				}
-
-				function AttemptPurchase() {
-					if (document.getElementById("time_selector").value === "") {
-						window.alert("Invalid selection!");
-					} else {
-						document.getElementById("ticket_form").submit();
-					}
-				}
+				<?php } ?>
 
 				function LoadBillingData() {
-					if(document.getElementById("billing_profile_selector").value !== "") {
-						//TODO
+					const billID = document.getElementById("billing_profile_selector").value;
+					if(billID !== "") {
+						for (const elem3 of billing_profile_array) {
+							if (elem3.BillingInfoID === billID) {
+								document.getElementById("firstName").value = elem3.Billing_FirstName;
+
+								document.getElementById("lastName").value = elem3.Billing_LastName;
+
+								document.getElementById("email").value = elem3.Email;
+
+								document.getElementById("address").value = elem3.Address;
+
+								document.getElementById("postal").value = elem3.Billing_PostalCode;
+
+								document.getElementById("city").value = elem3.City;
+
+								document.getElementById("StateProvince").value = elem3.StateProvince;
+
+								document.getElementById("country").value = elem3.Country;
+								break;
+							}
+						}
 					}
 				}				
 			<?php

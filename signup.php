@@ -3,6 +3,7 @@
 session_start(); 
 
 include "connect.php";
+include "functions.php";
 
 if (isset($_POST['SignupUsername']) && isset($_POST['SignupPassword'])) {
 

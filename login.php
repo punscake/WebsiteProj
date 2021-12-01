@@ -3,20 +3,13 @@
 session_start(); 
 
 include "connect.php";
+include "functions.php";
+
+if(isset($_SESSION['UserID'])) {
+    session_unset();
+}
 
 if (isset($_POST['InputUsername']) && isset($_POST['InputPassword'])) {
-
-    function validate($data){
-
-       $data = trim($data);
-
-       $data = stripslashes($data);
-
-       $data = htmlspecialchars($data);
-
-       return $data;
-
-    }
 
     $uname = validate($_POST['InputUsername']);
 
@@ -38,7 +31,7 @@ if (isset($_POST['InputUsername']) && isset($_POST['InputPassword'])) {
 
         if ($row && $row['Pass'] === $pass) {
 
-            $_SESSION['LoggedIn'] = true;
+            $_SESSION['Username'] = $row['Username'];
 
             $_SESSION['UserID'] = $row['UserID'];
 

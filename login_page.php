@@ -3,12 +3,12 @@
 session_start(); 
 
 $loggedIn = false;
-if (isset($_SESSION['LoggedIn'])) {
-	$loggedIn = $_SESSION['LoggedIn'];
-}
 $userId = "";
-if (isset($_SESSION['UserID'])) {
+$username = "";
+if (!empty($_SESSION['UserID'])) {
+	$loggedIn = true;
 	$userId = $_SESSION['UserID'];
+	$username = $_SESSION['Username'];
 }
 ?>
 
@@ -39,6 +39,14 @@ if (isset($_SESSION['UserID'])) {
 		<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark pt-1 pb-1 pe-1">
 
 			<a class="navbar-brand" href="index.php"><img class="Logo" src="content/logo.ico" alt="logo"></a>
+
+			<?php
+				if ($loggedIn) {
+			?>
+			<div class="navbar-brand heebo-font">
+				<?php echo "Hello, " . $username ."!"; ?>
+			</div>
+			<?php } ?>
 
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
@@ -93,10 +101,10 @@ if (isset($_SESSION['UserID'])) {
 				<div class="LoginMiddleOfPage">
 					<form method="post" action="login.php">
 							<div class="mb-3">
-								<input type="username" placeholder="Username" class="form-control" name="InputUsername" id="InputUsername" required>
+								<input type="username" placeholder="Username" class="form-control" name="InputUsername" id="InputUsername" pattern="^[A-Za-z0-9_]{1,15}$" required>
 							</div>
 							<div class="mb-3">
-								<input type="password" placeholder="Password" class="form-control" name="InputPassword" id="InputPassword" required>
+								<input type="password" placeholder="Password" class="form-control" name="InputPassword" id="InputPassword" pattern="^[A-Za-z0-9 -\/:-@\[-\`{-~][^\\/]{0,20}$" required>
 							</div>
 							<div class="d-flex flex-row">
 								<div class="me-auto">

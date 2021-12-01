@@ -3,12 +3,12 @@
 session_start(); 
 
 $loggedIn = false;
-if (isset($_SESSION['LoggedIn'])) {
-	$loggedIn = $_SESSION['LoggedIn'];
-}
 $userId = "";
-if (isset($_SESSION['UserID'])) {
+$username = "";
+if (!empty($_SESSION['UserID'])) {
+	$loggedIn = true;
 	$userId = $_SESSION['UserID'];
+	$username = $_SESSION['Username'];
 }
 ?>
 
@@ -39,6 +39,14 @@ if (isset($_SESSION['UserID'])) {
 		<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark pt-1 pb-1 pe-1">
 
 			<a class="navbar-brand" href="index.php"><img class="Logo" src="content/logo.ico" alt="logo"></a>
+
+			<?php
+				if ($loggedIn) {
+			?>
+			<div class="navbar-brand heebo-font">
+				<?php echo "Hello, " . $username ."!"; ?>
+			</div>
+			<?php } ?>
 
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>

@@ -2,6 +2,9 @@
 
 session_start(); 
 
+include "connect.php";
+include "functions.php";
+
 $loggedIn = false;
 $userId = "";
 $username = "";
@@ -10,7 +13,38 @@ if (!empty($_SESSION['UserID'])) {
 	$userId = $_SESSION['UserID'];
 	$username = $_SESSION['Username'];
 }
-?>
+
+$feedback_str = "";
+
+if (!$loggedIn) {
+    header("Location: login_page.php?error=Must be logged in");
+} else if (empty($_POST['time_selector'])) {
+	$feedback_str = "Error: No event were chosen";
+} else {
+	$value_array = array();
+	$value_array["firstName"] = validate($_POST['firstName']);
+	$value_array['lastName'] = validate($_POST['lastName']);
+	$value_array['email'] = validate($_POST['email']);
+	$value_array['address'] = validate($_POST['address']);
+	$value_array['postal'] = validate($_POST['postal']);
+	$value_array['city'] = validate($_POST['city']);
+	$value_array['StateProvince'] = validate($_POST['StateProvince']);
+	$value_array['country'] = validate($_POST['country']);
+
+	if (verifyBillingData($value_array)) {
+		//save billing data
+		if (isset($_POST['SaveBillingProfile'])) {
+			saveBillingData($_SESSION['UserID'], $value_array, $_POST['billing_profile_selector'], $con);
+		}
+		//process transaction
+
+		//pat the user on the back
+		$feedback_str = "Success!";
+	} else {
+		$feedback_str = "Error: incorrect billing data";
+	}	
+}?>
+
 <!doctype html>
 
 <html lang="en">
@@ -18,7 +52,7 @@ if (!empty($_SESSION['UserID'])) {
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-		<title>Sign Up</title>
+		<title>Events</title>
 		<meta name="description" content="Book tickets online for events">
 		<meta name="author" content="Max & Xavier">
 
@@ -92,40 +126,18 @@ if (!empty($_SESSION['UserID'])) {
 				</ul>
 			</div>
 		</nav>
-		
-
-		<main>
+        <main class="h-100">
 			<!--Hero Image-->
 			<div class="HeroImg d-flex align-items-center justify-content-center min-vh-100">
-				<div class="LoginMiddleOfPage">
-					<form method="post" action="signup.php">
-						<div class="mb-3">
-							<input type="username" placeholder="Username" class="form-control" name="SignupUsername" id="SignupUsername" pattern="^[A-Za-z0-9_]{1,15}$" required>
-						</div>
-						<div class="mb-3">
-							<input type="password" placeholder="Password" class="form-control" name="SignupPassword" id="SignupPassword" pattern="^[A-Za-z0-9 -\/:-@\[-\`{-~][^\\/]{0,20}$" required>
-						</div>
-						<div class="d-flex flex-row">
-							<div class="me-auto">
-								<a class="nav-link" href="login_page.php" style="padding: 8px;">Log in</a>
-							</div>
-							<div>
-								<button type="submit" class="btn btn-primary">Create new account</button>
-							</div>	
-						</div>
-					</form>
+				<div class="IntroductionMiddleOfPage" id="feedback-box">
+					<?php echo $feedback_str; ?>
 				</div>
 			</div>
-
+			
 
 			<footer class="bg-dark text-center p-4 text-secondary">
 				Copyright &copy 2021 Max & Xavier | All Rights Reserved
 			</footer>
 		</main>
-
-	<!-- JavaScript -->
-	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-	</body>
+    </body>
 </html>

@@ -14,7 +14,7 @@ function getAllSimilarEvents($EventID, $database) { //returns array
     $query = "SELECT * FROM EVENTS WHERE Name = (SELECT Name FROM EVENTS WHERE EventID = " . $EventID . " LIMIT 1)
     && Description = (SELECT Description FROM EVENTS WHERE EventID = " . $EventID . " LIMIT 1);";
     $query_result = mysqli_query($database, $query);
-    return writeQueryResultToArray($query_result);
+    return $query_result;
 }
 
 function getAllSimilarEventsOnlySeatsAvailable($EventID, $database) { //returns array
@@ -60,3 +60,26 @@ function checkEventHasTicketsAvailable($EventID, $database) { //returns bool
     }
     return true;
 }
+
+function saveBillingData($UserID, $value_array, $replaceID, $database) {
+    if (empty($replaceID)) {
+        $query = "INSERT INTO BILLINGINFO VALUES (DEFAULT, " . $UserID . ", '" . $value_array['firstName'] . "', '" . $value_array['lastName'] . "', '" . $value_array['email'] . "', '" . $value_array['address'] . "', '" . $value_array['postal'] . "', '" . $value_array['city'] . "', '" . $value_array['StateProvince'] . "', '" . $value_array['country'] . "');";
+        mysqli_query($database, $query);
+    } else {
+        $query = "REPLACE INTO BILLINGINFO VALUES (" . $replaceID . ", " . $UserID . ", '" . $value_array['firstName'] . "', '" . $value_array['lastName'] . "', '" . $value_array['email'] . "', '" . $value_array['address'] . "', '" . $value_array['postal'] . "', '" . $value_array['city'] . "', '" . $value_array['StateProvince'] . "', '" . $value_array['country'] . "');";
+        mysqli_query($database, $query);
+    }
+}
+
+function verifyBillingData($value_array) { //returns true if billing data is valid
+    return true;
+}
+
+function validate($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+ }
+
+ 
