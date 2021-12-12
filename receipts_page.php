@@ -101,19 +101,15 @@ if (!empty($_SESSION['UserID'])) {
 		</nav>
 
 		<main class="h-100">
-			<!--Hero Image-->
-			<div class="HeroImg d-flex align-items-center justify-content-center">
-				<div class="IntroductionMiddleOfPage" id="events_disclaimer">
-					<p>Browse upcoming events</p>
+			<!--Ticket Selection-->
+			<div class="after-nav justify-content-center blue-background">
+				<div class="IntroductionMiddleOfPage w-100 pt-3" id="receipts_disclaimer">
+					<p>Your receipts</p>
+				</div>
+				<div class="d-flex flex-row justify-content-evenly" id="receipts_container">
+					<!-- JavaScript added content -->
 				</div>
 			</div>
-
-
-			<!--Event Selection-->
-			<div class="d-flex flex-row justify-content-evenly blue-background" id="event_container">
-				<!-- JavaScript added content -->
-			</div>
-			
 
 			<footer class="bg-dark text-center p-4 text-secondary">
 				Copyright &copy 2021 Max & Xavier | All Rights Reserved
@@ -127,19 +123,28 @@ if (!empty($_SESSION['UserID'])) {
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 		
 		<script>			
-			//get table
-			const json_table =
+			//get tables
+			const lineitem_table =
 				<?php
-					$query_result = mysqli_query($con, "SELECT * FROM EVENTS WHERE EventID IN (SELECT MAX(EventID) FROM EVENTS WHERE Date > CURRENT_TIMESTAMP GROUP BY Name, Description, Venue);");
-					$result = writeQueryResultToArray($query_result);
+					echo "'";
+					echo json_encode( getLineItems2d($userId, $con) );
+					echo "'";
+				?>
+			;
+			const receipt_table =
+				<?php
+					$query = "SELECT * FROM RECEIPT WHERE BelongsToUser = " . $userId . ";";
+					$result = writeQueryResultToArray( mysqli_query($con, $query) );
 					echo "'";
 					echo json_encode($result);
 					echo "'";
 				?>
 			;
-			//as a javascript object
-			const query_array = JSON.parse(json_table);
-
+			//as a javascript objects
+			const lineitem_array = JSON.parse(lineitem_table);
+			const receipt_array = JSON.parse(receipt_table);
+			
+			//const lineitem_array = result;
 			listTable();
 			window.addEventListener('resize', listTable);
 			//call on load and window resize
@@ -149,64 +154,53 @@ if (!empty($_SESSION['UserID'])) {
 				num_displayed_colums = Math.max(parseInt(window_width / 333), 1);
 				
 				//remove then add colums
-					const main_container = document.getElementById("event_container");
+					const main_container = document.getElementById("receipts_container");
 
 					//remove
 					main_container.innerHTML = "";
-
-					//add disclaimer if no events
-					if (query_array.length === 0) {
-						document.getElementById("events_disclaimer").innerHTML = "No events yet!";
+					
+					//add disclaimer if no receipts
+					if (receipt_array.length === 0) {
+						document.getElementById("receipts_disclaimer").innerHTML = "No receipts yet!";
 					}
 
-					//add events (if any)
-					for (let i = 0; i < num_displayed_colums && i < query_array.length; i++) {
+					//add receipts (if any)
+					for (let i = 0; i < num_displayed_colums && i < receipt_array.length; i++) {
 						//create column
 						const col = document.createElement("div");
 						col.setAttribute("class", "flex-col mw-320");
 
 						//create column elements and append each
-						for (let j = i; j < query_array.length; j += num_displayed_colums) {
+						for (let j = i; j < receipt_array.length; j += num_displayed_colums) {
 							//create div for event information
 							const column_entry = document.createElement("div");
-							const onclick_string = "viewEvent(" + query_array[j].EventID + ")";
-							column_entry.setAttribute("onclick", onclick_string);
 							column_entry.setAttribute("class", "mt-5 event_link heebo-font p-3");
 							//append to column
 							col.appendChild(column_entry);
 
 							//add information
-							const name_container = document.createElement("div");
-							name_container.setAttribute("class", "p-1");
-							name_container.setAttribute("style", "font-weight: bold;");
-							const name_text = document.createTextNode(query_array[j].Name);
-							name_container.appendChild(name_text);
-							column_entry.appendChild(name_container);
-
-
-							const description_container = document.createElement("div");
-							description_container.setAttribute("class", "p-1");
-							description_container.setAttribute("style", "border-style: inset none outset none;");
-							const description_text = document.createTextNode(query_array[j].Description);
-							description_container.appendChild(description_text);
-							column_entry.appendChild(description_container);
-
+							const datetime_container = document.createElement("div");
+							datetime_container.setAttribute("class", "p-1");
+							datetime_container.setAttribute("style", "font-weight: bold;");
+							const datetime = receipt_array[j].DateTimeOfTransaction + " UTC";
+							datetime_container.appendChild( document.createTextNode(datetime) );
+							column_entry.appendChild(datetime_container);
 							
-							const venue_container = document.createElement("div");
-							venue_container.setAttribute("class", "p-1");
-							const venue_text = document.createTextNode(query_array[j].Venue);
-							venue_container.appendChild(venue_text);
-							column_entry.appendChild(venue_container);
+							const receiptID = receipt_array[j].ReceiptID;
+							const arr = lineitem_array[receiptID];
+							for (const elem of arr) {
+								const lineitem_container = document.createElement("div");
+								lineitem_container.setAttribute("class", "p-1");
+								lineitem_container.setAttribute("style", "font-weight: bold;");
+								const lineitem = "ID: " + elem.TicketItem + " | Price: " + elem.ItemPrice;
+								lineitem_container.appendChild( document.createTextNode(lineitem) );
+								column_entry.appendChild(lineitem_container);
+							}
 						}
 
 						//append to rows
 						main_container.appendChild(col);
 					}
-			}
-
-			function viewEvent(EventID) {
-				const link_str = "event_page.php?event=" + EventID;
-				window.open(link_str, "_self");
 			}
 		</script>
 	</body>

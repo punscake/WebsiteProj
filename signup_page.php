@@ -60,10 +60,13 @@ if (!empty($_SESSION['UserID'])) {
 						if ($loggedIn) {
 					?>
 					<li class="nav-item">
-						<a class="nav-link" href="bookings_page.php"> My Bookings </a>
+						<a class="nav-link" href="bookings_page.php"> Bookings </a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="receipts_page.php"> My Receipts </a>
+						<a class="nav-link" href="receipts_page.php"> Receipts </a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="edit_billing_page.php"> Billing </a>
 					</li>
 					<?php
 						}
@@ -113,6 +116,8 @@ if (!empty($_SESSION['UserID'])) {
 								<button type="submit" class="btn btn-primary">Create new account</button>
 							</div>	
 						</div>
+						<div class="pt-2 d-flex justify-content-center" id="error_message">
+						</div>
 					</form>
 				</div>
 			</div>
@@ -123,9 +128,12 @@ if (!empty($_SESSION['UserID'])) {
 			</footer>
 		</main>
 
-	<!-- JavaScript -->
-	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+		<!-- JavaScript -->
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+		<script>
+			document.getElementById("error_message").innerHTML = <?php echo "\"" . $_GET['error'] . "\""; ?>;
+		</script>
 	</body>
 </html>

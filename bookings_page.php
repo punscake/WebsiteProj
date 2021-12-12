@@ -101,19 +101,15 @@ if (!empty($_SESSION['UserID'])) {
 		</nav>
 
 		<main class="h-100">
-			<!--Hero Image-->
-			<div class="HeroImg d-flex align-items-center justify-content-center">
-				<div class="IntroductionMiddleOfPage" id="events_disclaimer">
-					<p>Browse upcoming events</p>
+			<!--Ticket Selection-->
+			<div class="after-nav justify-content-center blue-background">
+				<div class="IntroductionMiddleOfPage w-100 pt-3" id="booking_disclaimer">
+					<p>View upcoming bookings</p>
+				</div>
+				<div class="d-flex flex-row justify-content-evenly" id="booking_container">
+					<!-- JavaScript added content -->
 				</div>
 			</div>
-
-
-			<!--Event Selection-->
-			<div class="d-flex flex-row justify-content-evenly blue-background" id="event_container">
-				<!-- JavaScript added content -->
-			</div>
-			
 
 			<footer class="bg-dark text-center p-4 text-secondary">
 				Copyright &copy 2021 Max & Xavier | All Rights Reserved
@@ -128,9 +124,14 @@ if (!empty($_SESSION['UserID'])) {
 		
 		<script>			
 			//get table
-			const json_table =
+			const events_table =
 				<?php
-					$query_result = mysqli_query($con, "SELECT * FROM EVENTS WHERE EventID IN (SELECT MAX(EventID) FROM EVENTS WHERE Date > CURRENT_TIMESTAMP GROUP BY Name, Description, Venue);");
+					$query_result = mysqli_query($con,
+					"SELECT * FROM EVENTS WHERE Date > CURRENT_TIMESTAMP && EventID IN
+					(SELECT Event FROM TICKETS WHERE TicketID IN
+					(SELECT TicketItem FROM LINEITEM WHERE BelongsToReceipt IN
+					(SELECT ReceiptID FROM RECEIPT WHERE BelongsToUser = " . $userId . ")));"
+					);
 					$result = writeQueryResultToArray($query_result);
 					echo "'";
 					echo json_encode($result);
@@ -138,7 +139,7 @@ if (!empty($_SESSION['UserID'])) {
 				?>
 			;
 			//as a javascript object
-			const query_array = JSON.parse(json_table);
+			const event_array = JSON.parse(events_table);
 
 			listTable();
 			window.addEventListener('resize', listTable);
@@ -149,27 +150,27 @@ if (!empty($_SESSION['UserID'])) {
 				num_displayed_colums = Math.max(parseInt(window_width / 333), 1);
 				
 				//remove then add colums
-					const main_container = document.getElementById("event_container");
+					const main_container = document.getElementById("booking_container");
 
 					//remove
 					main_container.innerHTML = "";
-
-					//add disclaimer if no events
-					if (query_array.length === 0) {
-						document.getElementById("events_disclaimer").innerHTML = "No events yet!";
+					
+					//add disclaimer if no bookings
+					if (event_array.length === 0) {
+						document.getElementById("booking_disclaimer").innerHTML = "No bookings yet!";
 					}
 
-					//add events (if any)
-					for (let i = 0; i < num_displayed_colums && i < query_array.length; i++) {
+					//add bookings (if any)
+					for (let i = 0; i < num_displayed_colums && i < event_array.length; i++) {
 						//create column
 						const col = document.createElement("div");
 						col.setAttribute("class", "flex-col mw-320");
 
 						//create column elements and append each
-						for (let j = i; j < query_array.length; j += num_displayed_colums) {
+						for (let j = i; j < event_array.length; j += num_displayed_colums) {
 							//create div for event information
 							const column_entry = document.createElement("div");
-							const onclick_string = "viewEvent(" + query_array[j].EventID + ")";
+							const onclick_string = "viewEvent(" + event_array[j].EventID + ")";
 							column_entry.setAttribute("onclick", onclick_string);
 							column_entry.setAttribute("class", "mt-5 event_link heebo-font p-3");
 							//append to column
@@ -179,7 +180,7 @@ if (!empty($_SESSION['UserID'])) {
 							const name_container = document.createElement("div");
 							name_container.setAttribute("class", "p-1");
 							name_container.setAttribute("style", "font-weight: bold;");
-							const name_text = document.createTextNode(query_array[j].Name);
+							const name_text = document.createTextNode(event_array[j].Name);
 							name_container.appendChild(name_text);
 							column_entry.appendChild(name_container);
 
@@ -187,16 +188,18 @@ if (!empty($_SESSION['UserID'])) {
 							const description_container = document.createElement("div");
 							description_container.setAttribute("class", "p-1");
 							description_container.setAttribute("style", "border-style: inset none outset none;");
-							const description_text = document.createTextNode(query_array[j].Description);
+							const description_text = document.createTextNode(event_array[j].Description);
 							description_container.appendChild(description_text);
 							column_entry.appendChild(description_container);
 
 							
 							const venue_container = document.createElement("div");
 							venue_container.setAttribute("class", "p-1");
-							const venue_text = document.createTextNode(query_array[j].Venue);
+							const venue_text = document.createTextNode(event_array[j].Venue);
 							venue_container.appendChild(venue_text);
 							column_entry.appendChild(venue_container);
+
+
 						}
 
 						//append to rows
@@ -205,7 +208,7 @@ if (!empty($_SESSION['UserID'])) {
 			}
 
 			function viewEvent(EventID) {
-				const link_str = "event_page.php?event=" + EventID;
+				const link_str = "ticket_page.php?event=" + EventID;
 				window.open(link_str, "_self");
 			}
 		</script>

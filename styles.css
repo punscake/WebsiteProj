@@ -15,6 +15,10 @@
     padding-bottom: max(32px, 1.5em);
 }
 
+.after-nav {
+    padding-top: 69px;
+}
+
 .LoginMiddleOfPage {
     min-width: 320px;
     aspect-ratio: 16/9;
@@ -69,12 +73,24 @@
     font-size: 1.5em;
 }
 
-#event_container {
+.blue-background {
     background-image: url("content/pattern2.png");
     background-repeat: repeat;
     background-size: 306px;
+}
+
+#event_container {
     padding-bottom: 16px;
     min-height: calc(100vh - 282px);
+}
+
+#booking_container, #receipts_container {
+    padding-bottom: 16px;
+    min-height: calc(100vh - 223px);
+}
+
+.mw-320 {
+    max-width: 320px;
 }
 
 .event_link {
@@ -85,4 +101,11 @@
     min-height: 16em;
     background-color: rgba(160, 212, 216, 0.8);
     box-shadow: 5px 5px#607e82;
+}
+
+@media screen and (min-width: 768px) {
+    .flex-row-on-small {
+        display: flex;
+        flex-direction: row;
+    }
 }

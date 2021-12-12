@@ -7,18 +7,6 @@ include "functions.php";
 
 if (isset($_POST['SignupUsername']) && isset($_POST['SignupPassword'])) {
 
-    function validate($data){
-
-       $data = trim($data);
-
-       $data = stripslashes($data);
-
-       $data = htmlspecialchars($data);
-
-       return $data;
-
-    }
-
     $uname = validate($_POST['SignupUsername']);
 
     $pass = validate($_POST['SignupPassword']);
@@ -40,8 +28,9 @@ if (isset($_POST['SignupUsername']) && isset($_POST['SignupPassword'])) {
             header("Location: signup_page.php?error=User already exists!");
 
         } else {
-
-            header("Location: signup_page.php");
+            
+            $_SESSION['AutofillUsername'] = $uname;
+            header("Location: login_page.php");
 
         }
 
@@ -49,7 +38,7 @@ if (isset($_POST['SignupUsername']) && isset($_POST['SignupPassword'])) {
 
 }else{
 
-    header("Location: signup_page.php");
+    header("Location: signup_page?error=Fields not filled in.php");
 
 }
 unset($_POST['SingupUsername']);

@@ -39,14 +39,14 @@ if (isset($_POST['InputUsername']) && isset($_POST['InputPassword'])) {
 
         } else {
 
-            header("Location: login_page.php?error=Incorect User name or password");
+            header("Location: login_page.php?error=Incorrect User name or password");
         }
 
     }
 
 }else{
     
-    header("Location: login_page.php");
+    header("Location: login_page?error=Fields not filled in.php");
     
 }
 unset($_POST['InputUsername']);

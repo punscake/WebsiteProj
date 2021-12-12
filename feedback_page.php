@@ -2,6 +2,9 @@
 
 session_start(); 
 
+include "connect.php";
+include "functions.php";
+
 $loggedIn = false;
 $userId = "";
 $username = "";
@@ -9,8 +12,7 @@ if (!empty($_SESSION['UserID'])) {
 	$loggedIn = true;
 	$userId = $_SESSION['UserID'];
 	$username = $_SESSION['Username'];
-}
-?>
+}?>
 
 <!doctype html>
 
@@ -19,7 +21,7 @@ if (!empty($_SESSION['UserID'])) {
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-		<title>Log In</title>
+		<title>Events</title>
 		<meta name="description" content="Book tickets online for events">
 		<meta name="author" content="Max & Xavier">
 
@@ -96,31 +98,11 @@ if (!empty($_SESSION['UserID'])) {
 				</ul>
 			</div>
 		</nav>
-		
-
-		<main>
+        <main class="h-100">
 			<!--Hero Image-->
 			<div class="HeroImg d-flex align-items-center justify-content-center min-vh-100">
-				<div class="LoginMiddleOfPage">
-					<form method="post" action="login.php">
-							<div class="mb-3">
-								<input type="username" placeholder="Username" class="form-control" name="InputUsername" id="InputUsername" pattern="^[A-Za-z0-9_]{1,15}$" required>
-							</div>
-							<div class="mb-3">
-								<input type="password" placeholder="Password" class="form-control" name="InputPassword" id="InputPassword" pattern="^[A-Za-z0-9 -\/:-@\[-\`{-~][^\\/]{0,20}$" required>
-							</div>
-							<div class="d-flex flex-row">
-								<div class="me-auto">
-									<a class="nav-link" href="signup_page.php" style="padding: 10px;">Sign up</a>
-								</div>
-								<div>
-									<button type="submit" class="btn btn-primary">Submit</button>
-								</div>	
-							</div>
-							<div class="pt-2 d-flex justify-content-center" id="error_message">
-							</div>
-						</form>
-					</div>
+				<div class="IntroductionMiddleOfPage" id="feedback-box">
+					<?php echo $_GET['feedback']; ?>
 				</div>
 			</div>
 			
@@ -129,16 +111,5 @@ if (!empty($_SESSION['UserID'])) {
 				Copyright &copy 2021 Max & Xavier | All Rights Reserved
 			</footer>
 		</main>
-
-		<!-- JavaScript -->
-		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-		<script>
-			const autofill_uname = <?php echo "\"" . $_SESSION['AutofillUsername'] . "\""; unset($_SESSION['AutofillUsername']);?>;
-			document.getElementById("InputUsername").value = autofill_uname;
-
-			document.getElementById("error_message").innerHTML = <?php echo "\"" . $_GET['error'] . "\""; ?>;
-		</script>
-	</body>
+    </body>
 </html>

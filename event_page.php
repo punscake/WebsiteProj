@@ -66,10 +66,13 @@ $all_similar_events = getAllSimilarEvents($_GET['event'], $con);
 						if ($loggedIn) {
 					?>
 					<li class="nav-item">
-						<a class="nav-link" href="bookings_page.php"> My Bookings </a>
+						<a class="nav-link" href="bookings_page.php"> Bookings </a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="receipts_page.php"> My Receipts </a>
+						<a class="nav-link" href="receipts_page.php"> Receipts </a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="edit_billing_page.php"> Billing </a>
 					</li>
 					<?php
 						}
@@ -157,10 +160,19 @@ $all_similar_events = getAllSimilarEvents($_GET['event'], $con);
 								<div class="mt-1 heebo-font" id="billing_container">
 									<!-- JS added form -->
 								</div>
-							</div>
-							<div class="d-flex justify-content-center mt-3">
-								<button class="btn btn-primary" type="submit">Buy a Ticket</button>
-							</div>
+								<div class="mt-1 Bebas-font">Who the ticket is for:</div>
+								<div class="w-100 flex-row-on-small">
+									<div class="flex-fill">
+										<input type="text" placeholder="First Name" class="form-control" name="TicketFirstName" id="TicketFirstName" pattern="^[A-Za-z]{0,20}$" required>
+									</div>
+									<div class="flex-fill">
+										<input type="text" placeholder="Last Name" class="form-control" name="TicketLastName" id="TicketLastName" pattern="^[A-Za-z]{0,20}$" required>
+									</div>
+								</div>
+								<div class="d-flex justify-content-center mt-3">
+									<button class="btn btn-primary" type="submit" id="buyBtn"></button>
+								</div>
+							</div>							
 						</form>
 						<?php } else { ?>
 							<p class="p-2 font-weight-bold text-center Bebas-font">Log In to Purchase</p>
@@ -465,6 +477,8 @@ $all_similar_events = getAllSimilarEvents($_GET['event'], $con);
 				}
 				<?php } ?>
 
+				
+				window.addEventListener('resize', LoadBillingData);
 				function LoadBillingData() {
 					const billID = document.getElementById("billing_profile_selector").value;
 					if(billID !== "") {
@@ -489,7 +503,17 @@ $all_similar_events = getAllSimilarEvents($_GET['event'], $con);
 							}
 						}
 					}
-				}				
+				}
+
+				SetButtonPrice("");
+				function SetButtonPrice(price) {
+					const buyBtn = document.getElementById('buyBtn');
+					if (price.length === 0) {
+						buyBtn.innerHTML = "Buy a Ticket";
+					} else {
+						buyBtn.innerHTML = "Buy a Ticket (" + price + "$)";
+					}
+				}			
 			<?php
 			}
 			?>

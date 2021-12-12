@@ -36,63 +36,66 @@ if (!empty($_SESSION['UserID'])) {
 	<body>
 
 	<!-- Navigation -->
-		<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark pt-1 pb-1 pe-1">
+	<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark pt-1 pb-1 pe-1">
 
-			<a class="navbar-brand" href="index.php"><img class="Logo" src="content/logo.ico" alt="logo"></a>
+		<a class="navbar-brand" href="index.php"><img class="Logo" src="content/logo.ico" alt="logo"></a>
 
-			<?php
-				if ($loggedIn) {
-			?>
-			<div class="navbar-brand heebo-font">
-				<?php echo "Hello, " . $username ."!"; ?>
-			</div>
-			<?php } ?>
+		<?php
+			if ($loggedIn) {
+		?>
+		<div class="navbar-brand heebo-font">
+			<?php echo "Hello, " . $username ."!"; ?>
+		</div>
+		<?php } ?>
 
-			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
 
-			<div class="collapse navbar-collapse" id="navbarCollapse">
-				<ul class="navbar-nav heebo-font ms-2">
-					<li class="nav-item">
-						<a class="nav-link" href="index.php"> Events </a>
-					</li>
-					<?php
-						if ($loggedIn) {
-					?>
-					<li class="nav-item">
-						<a class="nav-link" href="bookings_page.php"> My Bookings </a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="receipts_page.php"> My Receipts </a>
-					</li>
-					<?php
-						}
-					?>
-					<li class="nav-item">
-						<a class="nav-link" href="about.php"> About Us </a>
-					</li>
-					<?php
-						if (!$loggedIn) {
-					?>
-					<li class="nav-item">
-						<a class="nav-link" href="login_page.php"> Log In/Sign Up </a>
-					</li>
-					<?php
-						}
-					?>
-					<?php
-						if ($loggedIn) {
-					?>
-					<li class="nav-item">
-						<a class="nav-link" href="logout.php"> Logout </a>
-					</li>
-					<?php
-						}
-					?>
-				</ul>
-			</div>
-		</nav>
+		<div class="collapse navbar-collapse" id="navbarCollapse">
+			<ul class="navbar-nav heebo-font ms-2">
+				<li class="nav-item">
+					<a class="nav-link" href="index.php"> Events </a>
+				</li>
+				<?php
+					if ($loggedIn) {
+				?>
+				<li class="nav-item">
+					<a class="nav-link" href="bookings_page.php"> Bookings </a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="receipts_page.php"> Receipts </a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="edit_billing_page.php"> Billing </a>
+				</li>
+				<?php
+					}
+				?>
+				<li class="nav-item">
+					<a class="nav-link" href="about.php"> About Us </a>
+				</li>
+				<?php
+					if (!$loggedIn) {
+				?>
+				<li class="nav-item">
+					<a class="nav-link" href="login_page.php"> Log In/Sign Up </a>
+				</li>
+				<?php
+					}
+				?>
+				<?php
+					if ($loggedIn) {
+				?>
+				<li class="nav-item">
+					<a class="nav-link" href="logout.php"> Logout </a>
+				</li>
+				<?php
+					}
+				?>
+			</ul>
+		</div>
+	</nav>
 
 		<main class="h-100">
 			<!--Hero Image-->
